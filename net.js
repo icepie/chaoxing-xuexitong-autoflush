@@ -1,5 +1,6 @@
 var url = require("url");
 var qs = require("querystring");
+var fs = require("fs");
 
 var { Cookie, Store, CookieJar } = require("tough-cookie");
 
@@ -38,6 +39,23 @@ class Net {
       await this.setCookie(res.headers.get("set-cookie"));
 
     return res.text();
+  }
+  async getFile(myurl, filePath) {
+    // if (!query) query = {};
+    // let obj = Object.assign(this.base, {
+    //   pathname: page,
+    //   query,
+    // });
+
+    let res = await fetch(myurl, {
+      headers: {
+        Cookie: await this.getCookies(),
+        "User-Agent": Net.UserAgent,
+      },
+    });
+
+    res.body.pipe(fs.createWriteStream(filePath));
+
   }
   async getJSON(page, query) {
     return JSON.parse(await this.get(page, query));

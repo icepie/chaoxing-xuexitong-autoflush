@@ -1,6 +1,9 @@
 var sleep = (t) => new Promise((y) => setTimeout(y, t));
 var Player = require("./player.js");
 var testList = require("./work/testList.js");
+// var fs = require("fs");
+// var path = require("path");
+
 
 class jobTask {
   constructor(classid, chapter, jobs, user, playerspeed, autotest) {
@@ -52,19 +55,61 @@ class jobTask {
     this.indexes++;
   }
   async handleJob(job) {
+
+    console.log(job)
+
     switch (job.type) {
       case "video": //视频任务
-        if (job.job) {
-          let player = new Player(
-            this.clazzId,
-            this.user,
-            job,
-            this.playerspeed
-          );
-          this.currentPlayer = player;
-          await player.wait();
-        }
+        // if (job.job) {
+        //   let player = new Player(
+        //     this.clazzId,
+        //     this.user,
+        //     job,
+        //     this.playerspeed
+        //   );
+        //   this.currentPlayer = player;
+        //   await player.wait();
+        // }
         break;
+      case "document":
+        let objectid = job.property.objectid;
+        let name = job.property.name;
+
+        // // http get
+        // let res = await this.user.net.get(
+        //   "/ananas/status/" + objectid + "?_t=" + new Date().getTime(),
+        // )
+        // res = JSON.parse(res)
+        // console.log(res)
+
+        // console.log(res.filename.replace(/\s/g, ''), res.download)
+
+        await this.user.net.getFile("https://cs-ans.chaoxing.com/download/" + objectid, "./tmp/" + name.replace(/\s/g, ''))
+
+        // let url = res.download
+
+        // let file = await this.user.net.getBin(url)
+
+        // const dest = path.join("./tmp", res.filename);
+        // const writer = fs.createWriteStream(dest);
+
+        // writer
+        //   .on("finish", () => {
+        //     writer.close();
+        //   })
+        //   .on("error", (_) => {
+        //     fs.unlink(dest, (err) => {
+        //       if (err) throw err;
+        //       console.log("path/file.txt was deleted");
+        //     });
+        //   });
+
+        // file.pipe(writer);
+
+        // console.log("test:", file)
+
+        break
+
       case "workid": //测验
         let list = new testList(
           this.chapter.courseid,
